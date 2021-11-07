@@ -9,6 +9,7 @@ using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -20,6 +21,8 @@ namespace Motorola
         ImageStreamingServer server;
         SerialPort port;
         bool squelch = false;
+        bool freqRead = false;
+        string currentFreq = "UNKNOWN";
         public MainForm()
         {
             InitializeComponent();
@@ -40,28 +43,59 @@ namespace Motorola
 
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            var bytes = new byte[port.BytesToRead];
-            port.Read(bytes, 0, port.BytesToRead);
+            var readCount = port.BytesToRead;
+            var bytes = new byte[readCount];
+            port.Read(bytes, 0, readCount);
             arrays.Add(bytes);
             var s = Encoding.ASCII.GetString(bytes);
             log.Invoke(new Action(() =>
             {
-                log.Text += "\r\n";
+                log.Items.Add("\r\n");
                 var literal = ToLiteral(s);
-                log.Text += literal;
+                log.Items.Add(literal);
                 File.AppendAllLines("log.txt", new[] { literal });
             }));
-            if (!squelch && s.Contains("\u0012"))
+            if (!squelch && (s.Contains("\u0012") || s.Contains("\u0014")))
             {
                 squelch = true;
             }
-            else if (squelch&& s.Contains("\u0003"))
+            else if (squelch && s.Contains("\u0003"))
             {
                 squelch = false;
             }
 
+            if (!freqRead && s.Contains("\u0011"))
+            {
+                freqRead = true;
+                currentFreq = "";
+            }
+            else if (freqRead && s.Contains("P"))
+            {
+                freqRead = false;
+            }
+
+            if (freqRead)
+            {
+                currentFreq += new string(s.Where(x => char.IsLetterOrDigit(x) || char.IsSeparator(x) || char.IsPunctuation(x)).ToArray());
+            }
+
+
             var display = squelch ? "(BUSY)" : "RX";
-            FreqLabel.Invoke(new Action(() => FreqLabel.Text = display));
+            display = $"{display} : {ExtractFreq(currentFreq)}";
+            MotorolaScreen.Invoke(new Action(() => MotorolaScreen.Text = display));
+        }
+
+        private string ExtractFreq(string currentFreq)
+        {
+            try
+            {
+                var match = Regex.Match(currentFreq, @"\d{3}\.\d{3}", RegexOptions.IgnoreCase, TimeSpan.FromSeconds(2));
+                return match?.Value;
+            }
+            catch
+            {
+                return "UNKNOWN";
+            }
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)

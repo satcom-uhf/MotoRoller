@@ -29,34 +29,10 @@ namespace Motorola
         /// </summary>
         private void InitializeComponent()
         {
-            this.MotorolaScreen = new System.Windows.Forms.GroupBox();
-            this.FreqLabel = new System.Windows.Forms.Label();
             this.StartButton = new System.Windows.Forms.Button();
-            this.log = new System.Windows.Forms.RichTextBox();
-            this.MotorolaScreen.SuspendLayout();
+            this.log = new System.Windows.Forms.ListBox();
+            this.MotorolaScreen = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
-            // 
-            // MotorolaScreen
-            // 
-            this.MotorolaScreen.BackColor = System.Drawing.Color.Black;
-            this.MotorolaScreen.Controls.Add(this.FreqLabel);
-            this.MotorolaScreen.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.MotorolaScreen.Location = new System.Drawing.Point(0, 0);
-            this.MotorolaScreen.Name = "MotorolaScreen";
-            this.MotorolaScreen.Size = new System.Drawing.Size(268, 179);
-            this.MotorolaScreen.TabIndex = 0;
-            this.MotorolaScreen.TabStop = false;
-            this.MotorolaScreen.Text = "GM360";
-            // 
-            // FreqLabel
-            // 
-            this.FreqLabel.Font = new System.Drawing.Font("LCD", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.FreqLabel.ForeColor = System.Drawing.Color.Lime;
-            this.FreqLabel.Location = new System.Drawing.Point(6, 34);
-            this.FreqLabel.Name = "FreqLabel";
-            this.FreqLabel.Size = new System.Drawing.Size(256, 22);
-            this.FreqLabel.TabIndex = 0;
-            this.FreqLabel.Text = "label1";
             // 
             // StartButton
             // 
@@ -70,34 +46,46 @@ namespace Motorola
             // 
             // log
             // 
-            this.log.Location = new System.Drawing.Point(316, 115);
+            this.log.FormattingEnabled = true;
+            this.log.ItemHeight = 15;
+            this.log.Location = new System.Drawing.Point(424, 111);
             this.log.Name = "log";
-            this.log.Size = new System.Drawing.Size(453, 202);
+            this.log.Size = new System.Drawing.Size(334, 244);
             this.log.TabIndex = 2;
-            this.log.Text = "";
+            // 
+            // MotorolaScreen
+            // 
+            this.MotorolaScreen.BackColor = System.Drawing.Color.Black;
+            this.MotorolaScreen.Font = new System.Drawing.Font("LCD", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.MotorolaScreen.ForeColor = System.Drawing.Color.Lime;
+            this.MotorolaScreen.Location = new System.Drawing.Point(0, 0);
+            this.MotorolaScreen.Multiline = true;
+            this.MotorolaScreen.Name = "MotorolaScreen";
+            this.MotorolaScreen.ReadOnly = true;
+            this.MotorolaScreen.Size = new System.Drawing.Size(320, 200);
+            this.MotorolaScreen.TabIndex = 3;
+            this.MotorolaScreen.Text = "Test";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.MotorolaScreen);
             this.Controls.Add(this.log);
             this.Controls.Add(this.StartButton);
-            this.Controls.Add(this.MotorolaScreen);
             this.Name = "MainForm";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-            this.MotorolaScreen.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.GroupBox MotorolaScreen;
         private System.Windows.Forms.Button StartButton;
-        private System.Windows.Forms.Label FreqLabel;
-        private System.Windows.Forms.RichTextBox log;
+        private System.Windows.Forms.ListBox log;
+        private System.Windows.Forms.TextBox MotorolaScreen;
     }
 }
 

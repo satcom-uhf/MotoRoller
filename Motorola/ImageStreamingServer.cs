@@ -23,7 +23,7 @@ namespace Motorola
             _Thread = null;
 
             this.ImagesSource = imagesSource;
-            this.Interval = 50;
+            this.Interval = 200;
 
         }
         public ImageStreamingServer(Control ctrl) : this(GetFrames(ctrl))
