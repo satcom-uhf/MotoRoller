@@ -80,15 +80,7 @@ namespace Motorola
             }
 
         }
-
-        /// <summary>
-        /// Starts the server to accepts any new connections on the default port (8080).
-        /// </summary>
-        public void Start()
-        {
-            this.Start(8080);
-        }
-
+        
         public void Stop()
         {
 
