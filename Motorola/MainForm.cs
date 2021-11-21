@@ -32,13 +32,13 @@ namespace Motorola
         {
             if (server == null)
             {
+                StartButton.Enabled = false;
                 server = new ImageStreamingServer(MotorolaScreen);
                 server.Start();
-                port = new SerialPort("COM10");
+                port = new SerialPort(comPorts.SelectedItem.ToString());
                 port.DataReceived += Port_DataReceived;
                 port.Open();
             }
-
         }
 
         private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -48,13 +48,6 @@ namespace Motorola
             port.Read(bytes, 0, readCount);
             arrays.Add(bytes);
             var s = Encoding.ASCII.GetString(bytes);
-            log.Invoke(new Action(() =>
-            {
-                log.Items.Add("\r\n");
-                var literal = ToLiteral(s);
-                log.Items.Add(literal);
-                File.AppendAllLines("log.txt", new[] { literal });
-            }));
             if (!squelch && (s.Contains("\u0012") || s.Contains("\u0014")))
             {
                 squelch = true;
@@ -138,6 +131,11 @@ namespace Motorola
             }
             literal.Append("\"");
             return literal.ToString();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            comPorts.Items.AddRange(SerialPort.GetPortNames());
         }
     }
 }

@@ -30,28 +30,19 @@ namespace Motorola
         private void InitializeComponent()
         {
             this.StartButton = new System.Windows.Forms.Button();
-            this.log = new System.Windows.Forms.ListBox();
             this.MotorolaScreen = new System.Windows.Forms.TextBox();
+            this.comPorts = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // StartButton
             // 
-            this.StartButton.Location = new System.Drawing.Point(566, 60);
+            this.StartButton.Location = new System.Drawing.Point(200, 207);
             this.StartButton.Name = "StartButton";
             this.StartButton.Size = new System.Drawing.Size(75, 23);
             this.StartButton.TabIndex = 1;
-            this.StartButton.Text = "button1";
+            this.StartButton.Text = "Start";
             this.StartButton.UseVisualStyleBackColor = true;
             this.StartButton.Click += new System.EventHandler(this.StartButton_Click);
-            // 
-            // log
-            // 
-            this.log.FormattingEnabled = true;
-            this.log.ItemHeight = 15;
-            this.log.Location = new System.Drawing.Point(424, 111);
-            this.log.Name = "log";
-            this.log.Size = new System.Drawing.Size(334, 244);
-            this.log.TabIndex = 2;
             // 
             // MotorolaScreen
             // 
@@ -66,17 +57,28 @@ namespace Motorola
             this.MotorolaScreen.TabIndex = 3;
             this.MotorolaScreen.Text = "Test";
             // 
+            // comPorts
+            // 
+            this.comPorts.FormattingEnabled = true;
+            this.comPorts.Location = new System.Drawing.Point(12, 207);
+            this.comPorts.Name = "comPorts";
+            this.comPorts.Size = new System.Drawing.Size(121, 23);
+            this.comPorts.TabIndex = 4;
+            this.comPorts.Text = "Select COM port";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(320, 238);
+            this.Controls.Add(this.comPorts);
             this.Controls.Add(this.MotorolaScreen);
-            this.Controls.Add(this.log);
             this.Controls.Add(this.StartButton);
             this.Name = "MainForm";
-            this.Text = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Motorola IP Cam";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -84,8 +86,8 @@ namespace Motorola
 
         #endregion
         private System.Windows.Forms.Button StartButton;
-        private System.Windows.Forms.ListBox log;
         private System.Windows.Forms.TextBox MotorolaScreen;
+        private System.Windows.Forms.ComboBox comPorts;
     }
 }
 
