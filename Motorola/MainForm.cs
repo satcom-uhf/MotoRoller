@@ -77,16 +77,22 @@ namespace Motorola
             {
                 sql = "RX";
             }
+            else if (ClearScreen(bytesAsString))
+            {
+                display = "";
+            }
             else if (DisplayUpdate(bytesAsString))
             {
                 var subArray = bytes.Skip(6).Take(bytes.Length - 8).ToArray();
-                display = Encoding.ASCII.GetString(subArray);
+                display += $"{Encoding.ASCII.GetString(subArray)}\r\n";
             }
 
             MotorolaScreen.Text = $"{sql} : {display}";
         }
 
-        private bool DisplayUpdate(string bytes) => bytes.StartsWith("FF-34-00-11-00-00-");
+        private bool ClearScreen(string bytesAsString) => bytesAsString.StartsWith("F5-30-06-00-00");
+
+        private bool DisplayUpdate(string bytes) => bytes.StartsWith("FF-34-00-");
 
         private bool CloseSquelch(string bytes) => bytes.StartsWith("F5-35-03-FF");
 
