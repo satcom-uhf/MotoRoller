@@ -51,6 +51,7 @@ namespace Motorola
             // MotorolaScreen
             // 
             this.MotorolaScreen.BackColor = System.Drawing.Color.Black;
+            this.MotorolaScreen.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.MotorolaScreen.Font = new System.Drawing.Font("LCD", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.MotorolaScreen.ForeColor = System.Drawing.Color.Lime;
             this.MotorolaScreen.Location = new System.Drawing.Point(0, 0);
@@ -59,7 +60,7 @@ namespace Motorola
             this.MotorolaScreen.ReadOnly = true;
             this.MotorolaScreen.Size = new System.Drawing.Size(320, 200);
             this.MotorolaScreen.TabIndex = 3;
-            this.MotorolaScreen.Text = "Test";
+            this.MotorolaScreen.Text = "LOADING...";
             // 
             // comPorts
             // 
@@ -98,10 +99,11 @@ namespace Motorola
             // 
             // log
             // 
-            this.log.Location = new System.Drawing.Point(338, 0);
+            this.log.Dock = System.Windows.Forms.DockStyle.Right;
+            this.log.Location = new System.Drawing.Point(326, 0);
             this.log.Name = "log";
             this.log.ReadOnly = true;
-            this.log.Size = new System.Drawing.Size(356, 200);
+            this.log.Size = new System.Drawing.Size(380, 268);
             this.log.TabIndex = 7;
             this.log.Text = "";
             // 
