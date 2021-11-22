@@ -21,6 +21,7 @@ namespace Motorola
         SerialPort port;
         Task monitor;
         string display = "UNKNOWN";
+        string sql = "RX";
         public MainForm()
         {
             InitializeComponent();
@@ -39,20 +40,20 @@ namespace Motorola
                   {
                       try
                       {
-                          foreach (var b in GetBytes())
+                          foreach (var bytes in GetBytes())
                           {
                               log.Invoke(new Action(() =>
                               {
-                                  var text = new string(Encoding.ASCII.GetString(b)
+                                  var text = new string(Encoding.ASCII.GetString(bytes)
                                   .Where(x => char.IsLetterOrDigit(x) || char.IsSeparator(x) || char.IsPunctuation(x)).ToArray());
 
-                                  var bytes = BitConverter.ToString(b);
-                                  log.AppendText($"{bytes} {text}\r\n");
-                                  ProduceEvents(bytes);
-                              //var literal = ToLiteral(s);
-                              //var b = BitConverter.ToString(b);
-                              //log.AppendText($"{literal} ({b})");
-                          }));
+                                  var byteAsString = BitConverter.ToString(bytes);
+                                  log.AppendText($"{byteAsString} {text}\r\n");
+                                  ProduceEvents(byteAsString, bytes);
+                                  //var literal = ToLiteral(s);
+                                  //var b = BitConverter.ToString(b);
+                                  //log.AppendText($"{literal} ({b})");
+                              }));
                           }
                       }
                       catch { }
@@ -60,7 +61,7 @@ namespace Motorola
             }
         }
 
-        private void ProduceEvents(string bytes)
+        private void ProduceEvents(string bytesAsString, byte[] bytes)
         {
             /* 
              * F5-35-00-3F-14-00-82-50 SQL Open
@@ -68,18 +69,24 @@ namespace Motorola
              * F5-35-00-3F-12-00-84-50 SQL Open
              * F5-35-03-FF-ED-1F-C7-50 SQL Close
              */
-            string sql = "";
-            if (OpenSquelch(bytes))
+            if (OpenSquelch(bytesAsString))
             {
                 sql = "BUSY";
             }
-            else if (CloseSquelch(bytes))
+            else if (CloseSquelch(bytesAsString))
             {
                 sql = "RX";
             }
+            else if (DisplayUpdate(bytesAsString))
+            {
+                var subArray = bytes.Skip(6).Take(bytes.Length - 8).ToArray();
+                display = Encoding.ASCII.GetString(subArray);
+            }
 
-            MotorolaScreen.Text = $"{sql} : {display}"; 
+            MotorolaScreen.Text = $"{sql} : {display}";
         }
+
+        private bool DisplayUpdate(string bytes) => bytes.StartsWith("FF-34-00-11-00-00-");
 
         private bool CloseSquelch(string bytes) => bytes.StartsWith("F5-35-03-FF");
 
