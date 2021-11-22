@@ -48,6 +48,12 @@ namespace Motorola
             port.Read(bytes, 0, readCount);
             arrays.Add(bytes);
             var s = Encoding.ASCII.GetString(bytes);
+            log.Invoke(new Action(() =>
+            {
+                log.AppendText("\r\n");
+                var literal = ToLiteral(s);
+                log.AppendText(literal);                
+            }));
             if (!squelch && (s.Contains("\u0012") || s.Contains("\u0014")))
             {
                 squelch = true;
@@ -78,6 +84,42 @@ namespace Motorola
             MotorolaScreen.Invoke(new Action(() => MotorolaScreen.Text = display));
         }
 
+        static string ToLiteral(string input)
+        {
+            StringBuilder literal = new StringBuilder(input.Length + 2);
+            literal.Append("\"");
+            foreach (var c in input)
+            {
+                switch (c)
+                {
+                    case '\"': literal.Append("\\\""); break;
+                    case '\\': literal.Append(@"\\"); break;
+                    case '\0': literal.Append(@"\0"); break;
+                    case '\a': literal.Append(@"\a"); break;
+                    case '\b': literal.Append(@"\b"); break;
+                    case '\f': literal.Append(@"\f"); break;
+                    case '\n': literal.Append(@"\n"); break;
+                    case '\r': literal.Append(@"\r"); break;
+                    case '\t': literal.Append(@"\t"); break;
+                    case '\v': literal.Append(@"\v"); break;
+                    default:
+                        // ASCII printable character
+                        if (c >= 0x20 && c <= 0x7e)
+                        {
+                            literal.Append(c);
+                            // As UTF16 escaped character
+                        }
+                        else
+                        {
+                            literal.Append(@"\u");
+                            literal.Append(((int)c).ToString("x4"));
+                        }
+                        break;
+                }
+            }
+            literal.Append("\"");
+            return literal.ToString();
+        }
         private string ExtractFreq(string currentFreq)
         {
             try
@@ -93,7 +135,7 @@ namespace Motorola
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            port.Close();
+            port?.Close();
         }       
 
         private void MainForm_Load(object sender, EventArgs e)
