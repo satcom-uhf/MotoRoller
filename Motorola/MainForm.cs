@@ -36,8 +36,64 @@ namespace Motorola
                 server = new ImageStreamingServer(MotorolaScreen);
                 server.Start(Convert.ToInt32(httpPortNumber.Value));
                 port = new SerialPort(comPorts.SelectedItem.ToString());
-                port.DataReceived += Port_DataReceived;
                 port.Open();
+                Task.Run(() =>
+                {
+                    foreach (var b in GetBytes())
+                    {
+                        log.Invoke(new Action(() =>
+                        {
+                            var bytes = BitConverter.ToString(b);
+                            ProduceEvents(bytes);
+                            log.AppendText($"{bytes}\r\n");
+                            //var literal = ToLiteral(s);
+                            //var b = BitConverter.ToString(b);
+                            //log.AppendText($"{literal} ({b})");
+                        }));
+                    }
+                });
+            }
+        }
+
+        private void ProduceEvents(string bytes)
+        {
+            /* 
+             * F5-35-00-3F-14-00-82-50 SQL Open
+             * F5-35-03-FF-EB-1F-C9-50 SQL Close
+             * F5-35-00-3F-12-00-84-50 SQL Open
+             * F5-35-03-FF-ED-1F-C7-50 SQL Close
+             */
+            string display = "";
+            if (OpenSquelch(bytes))
+            {
+                display = "BUSY";
+            } else if (CloseSquelch(bytes))
+            {
+                display = "RX";
+            }
+
+            display = $"{display} : {ExtractFreq(currentFreq)}";
+            MotorolaScreen.Invoke(new Action(() => MotorolaScreen.Text = display));
+        }
+
+        private bool CloseSquelch(string bytes) => bytes.StartsWith("F5-35-03-FF");
+
+        private bool OpenSquelch(string bytes) => bytes.StartsWith("F5-35-00-3F");
+
+        private IEnumerable<byte[]> GetBytes()
+        {
+            List<byte> batch = new();
+            while (port.IsOpen)
+            {
+                var b = port.BaseStream.ReadByte();
+                var byteVal = (byte)b;
+                batch.Add(byteVal);
+                if (b == -1) { yield break; }
+                if (byteVal == 0x50)
+                {
+                    yield return batch.ToArray();
+                    batch.Clear();
+                }
             }
         }
 
@@ -52,7 +108,8 @@ namespace Motorola
             {
                 log.AppendText("\r\n");
                 var literal = ToLiteral(s);
-                log.AppendText(literal);                
+                var b = BitConverter.ToString(bytes);
+                log.AppendText($"{literal} ({b})");
             }));
             if (!squelch && (s.Contains("\u0012") || s.Contains("\u0014")))
             {
@@ -136,7 +193,7 @@ namespace Motorola
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             port?.Close();
-        }       
+        }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
