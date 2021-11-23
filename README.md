@@ -2,7 +2,8 @@
 
 This tool allows you to share the Motorola GM screen as an IP camera
 
-![изображение](https://user-images.githubusercontent.com/90838159/142772340-e6506b9b-ff9c-464f-9509-f5709c2b22c3.png)
+![изображение](https://user-images.githubusercontent.com/90838159/143098230-bb3cd973-bdc5-4494-9b24-34ee562f45de.png)
+
 
 1. Connect your radio to PC using programming cable
 2. Download and unzip the latest release
@@ -11,4 +12,4 @@ This tool allows you to share the Motorola GM screen as an IP camera
 5. Click "Start"
 6. Open http://localhost:8080
 
-Many thanks to YAMAL
+Many thanks to YAMAL & OBERON
