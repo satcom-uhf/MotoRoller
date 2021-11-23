@@ -8,7 +8,7 @@ Tested on GM360 (with Zones) & GM1280
 
 
 1. Connect your radio to PC using programming cable
-2. Download and unzip the latest release
+2. Download the latest release
 3. Run Motorola.exe
 4. Choose COM port and http port (by default it's 8080)
 5. Click "Start"
