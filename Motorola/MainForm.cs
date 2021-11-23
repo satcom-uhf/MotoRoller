@@ -1,15 +1,6 @@
 ﻿using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -20,8 +11,7 @@ namespace Motorola
         ImageStreamingServer server;
         SerialPort port;
         Task monitor;
-        string display = "UNKNOWN";
-        string sql = "RX";
+        DisplayAdapter adapter = new DisplayAdapter();
         public MainForm()
         {
             InitializeComponent();
@@ -36,67 +26,18 @@ namespace Motorola
                 server.Start(Convert.ToInt32(httpPortNumber.Value));
                 port = new SerialPort(comPorts.SelectedItem.ToString());
                 port.Open();
+                adapter.Updated += (s, e) => log.Invoke(new Action(() =>
+                {
+                    log.AppendText($"{e}\r\n");
+                    MotorolaScreen.Text = adapter.Display;
+                }));
                 monitor = Task.Run(() =>
                   {
-                      try
-                      {
-                          foreach (var bytes in GetBytes())
-                          {
-                              log.Invoke(new Action(() =>
-                              {
-                                  var text = new string(Encoding.ASCII.GetString(bytes)
-                                  .Where(x => char.IsLetterOrDigit(x) || char.IsSeparator(x) || char.IsPunctuation(x)).ToArray());
-
-                                  var byteAsString = BitConverter.ToString(bytes);
-                                  log.AppendText($"{byteAsString} {text}\r\n");
-                                  ProduceEvents(byteAsString, bytes);
-                                  //var literal = ToLiteral(s);
-                                  //var b = BitConverter.ToString(b);
-                                  //log.AppendText($"{literal} ({b})");
-                              }));
-                          }
-                      }
-                      catch { }
+                      adapter.Subscribe(GetBytes());
                   });
             }
         }
 
-        private void ProduceEvents(string bytesAsString, byte[] bytes)
-        {
-            /* 
-             * F5-35-00-3F-14-00-82-50 SQL Open
-             * F5-35-03-FF-EB-1F-C9-50 SQL Close
-             * F5-35-00-3F-12-00-84-50 SQL Open
-             * F5-35-03-FF-ED-1F-C7-50 SQL Close
-             */
-            if (OpenSquelch(bytesAsString))
-            {
-                sql = "BUSY";
-            }
-            else if (CloseSquelch(bytesAsString))
-            {
-                sql = "RX";
-            }
-            else if (ClearScreen(bytesAsString))
-            {
-                display = "";
-            }
-            else if (DisplayUpdate(bytesAsString))
-            {
-                var subArray = bytes.Skip(6).Take(bytes.Length - 8).ToArray();
-                display += $"{Encoding.ASCII.GetString(subArray)}\r\n";
-            }
-
-            MotorolaScreen.Text = $"{sql} : {display}";
-        }
-
-        private bool ClearScreen(string bytesAsString) => bytesAsString.StartsWith("F5-30-06-00-00");
-
-        private bool DisplayUpdate(string bytes) => bytes.StartsWith("FF-34-00-");
-
-        private bool CloseSquelch(string bytes) => bytes.StartsWith("F5-35-03-FF");
-
-        private bool OpenSquelch(string bytes) => bytes.StartsWith("F5-35-00-3F");
 
         private IEnumerable<byte[]> GetBytes()
         {
