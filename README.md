@@ -2,6 +2,8 @@
 
 This tool allows you to share the Motorola GM screen as an IP camera
 
+Tested on GM360 (with Zones) & GM1280
+
 ![изображение](https://user-images.githubusercontent.com/90838159/143098230-bb3cd973-bdc5-4494-9b24-34ee562f45de.png)
 
 
