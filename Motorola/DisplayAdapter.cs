@@ -29,20 +29,29 @@ namespace Motorola
                     }
                     else if (DisplayUpdate(bytesAsString))
                     {
-                        var addr = bytesAsString.Substring(DisplayPrefix.Length - 1, 5);
+                        var startIndex = bytesAsString.IndexOf(DisplayPrefix);
+                        var addr = bytesAsString.Substring(startIndex + DisplayPrefix.Length - 1, 5);
                         var subArray = bytes.Skip(6).Take(bytes.Length - 8).ToArray();
-                        lines[addr]=  $"{Encoding.ASCII.GetString(subArray)}";
+                        lines[addr] = ExcludeSpecificChars(subArray);
                     }
-                    Updated?.Invoke(this, $"{bytesAsString} {Encoding.ASCII.GetString(bytes)}");
+                    var usefulChars = ExcludeSpecificChars(bytes);
+                    Updated?.Invoke(this, $"{bytesAsString} {usefulChars}");
                 }
 
             }
-            catch { }
+            catch (Exception ex)
+            {
+            }
         }
 
-        
+        private string ExcludeSpecificChars(byte[] bytes) =>
+
+            new string(Encoding.GetEncoding(866).GetString(bytes)
+                                  .Where(x => char.IsLetterOrDigit(x) || char.IsSeparator(x) || char.IsPunctuation(x)).ToArray());
+
+
         private const string DisplayPrefix = "FF-34-00-";
-        private static bool DisplayUpdate(string bytes) => bytes.StartsWith(DisplayPrefix);
+        private static bool DisplayUpdate(string bytes) => bytes.Contains(DisplayPrefix);
 
         private static bool CloseSquelch(string bytes) => bytes.StartsWith("F5-35-03-FF");
 
