@@ -24,7 +24,7 @@ namespace Motorola
                 StartButton.Enabled = false;
                 server = new ImageStreamingServer(MotorolaScreen);
                 server.Start(Convert.ToInt32(httpPortNumber.Value));
-                port = new SerialPort(comPorts.SelectedItem.ToString());
+                port = new SerialPort(comPorts.SelectedItem.ToString(), 115200);
                 port.Open();
                 adapter.Updated += (s, e) => log.Invoke(new Action(() =>
                 {
