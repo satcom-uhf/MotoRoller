@@ -21,6 +21,12 @@ socket.addEventListener('message', (event) => {
         if (bytes == "f5:35:03:ff:fb:1f:b9") {
             document.getElementById("SQL").classList.add("hidden");
         }
+        if (bytes.indexOf("f5:35:00:00:04:00:d1")!=-1) {
+            document.getElementById("PWR").innerText = "H";
+        }
+        if (bytes.indexOf("f5:35:00:00:02:00:d3")!=-1) {
+            document.getElementById("PWR").innerText = "L";
+        }
     } else {
 
         log('Message from server ' + event.data);
