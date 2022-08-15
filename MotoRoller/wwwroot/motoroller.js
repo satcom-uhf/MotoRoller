@@ -15,13 +15,19 @@ socket.addEventListener('message', (event) => {
     if (event.data instanceof ArrayBuffer) {
         var bytes = buf2hex(event.data);
         log(bytes);
+        if (bytes == "f5:35:00:3f:04:00:92") {
+            document.getElementById("SQL").classList.remove("hidden");
+        }
+        if (bytes == "f5:35:03:ff:fb:1f:b9") {
+            document.getElementById("SQL").classList.add("hidden");
+        }
     } else {
 
         log('Message from server ' + event.data);
         var msg = event.data;
         if (msg.startsWith("DSPL:")) {
             msg = msg.replace("DSPL:", "");
-            document.getElementById("LCD").innerText = msg;
+            document.getElementById("FREQ").innerText = msg;
         }
         
     }
