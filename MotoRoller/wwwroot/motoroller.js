@@ -15,10 +15,10 @@ socket.addEventListener('message', (event) => {
     if (event.data instanceof ArrayBuffer) {
         var bytes = buf2hex(event.data);
         log(bytes);
-        if (bytes == "f5:35:00:3f:04:00:92") {
+        if (bytes.indexOf("f5:35:00:3f")!=-1) {
             document.getElementById("SQL").classList.remove("hidden");
         }
-        if (bytes == "f5:35:03:ff:fb:1f:b9") {
+        if (bytes.indexOf("f5:35:03:ff")!=-1) {
             document.getElementById("SQL").classList.add("hidden");
         }
         if (bytes.indexOf("f5:35:00:00:04:00:d1")!=-1) {
