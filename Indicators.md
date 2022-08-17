@@ -1,4 +1,5 @@
 ![изображение](https://user-images.githubusercontent.com/90838159/185222714-a6b202db-6d86-4670-9cb8-5dfcd998d782.png)
+```
 F5 35 00 XX XX XX XX - зажигает индикаторы
 F5 35 03 XX XX XX XX - гасит индикаторы
 
@@ -8,3 +9,4 @@ F5 35 03 XX XX XX XX - гасит индикаторы
 0xF5 0x35 0x00 0x00 0x00 0x08 xCD -  Keypad lock
 0xF5 0x35 0x00 0x00 0x00 0x10 xC5 -  Missed call
 
+```
