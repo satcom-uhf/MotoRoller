@@ -13,15 +13,20 @@ var port = new SerialPort(serialPortName, 9600, Parity.None, 8, StopBits.One);
 List<WebSocket> sockets = new();
 List<byte> message = new List<byte>();
 var detector = new DisplayUpdateDetector();
-detector.MessageDetected += (s, e) =>
+detector.DisplayUpdated += (s, e) =>
 {
-    _ = SendStringToSockets(string.Join("\r\n", detector.DisplayRows.Values));
+    _ = SendStringToSockets("DSPL:" + string.Join("\r\n", detector.DisplayRows.Values));
 };
 port.DataReceived += (s, e) =>
  {
      while (port.BytesToRead > 0)
      {
          var b = port.ReadByte();
+         if (b == -1)
+         {
+             break;
+         }
+         detector.AddByte((byte)b);
          if (b == 0x50)
          {
              if (message.Any())
@@ -32,11 +37,6 @@ port.DataReceived += (s, e) =>
              break;
          }
          //if (b)
-         if (b == -1)
-         {
-             break;
-         }
-         detector.AddByte((byte)b);
          message.Add((byte)b);
      }
 
@@ -45,18 +45,16 @@ port.DataReceived += (s, e) =>
 
 async Task SendBytesToSockets(List<byte> bytes)
 {
-    try
+    var bytesString = String.Join(':', bytes.Select(x => x.ToString("X2")));
+    if (bytesString.StartsWith("F5:35:03:FF"))
     {
-        foreach (var socket in sockets)
-        {
-            Console.WriteLine(String.Join(':', bytes.Select(x => x.ToString("X2"))));
-            await socket.SendAsync(new ArraySegment<byte>(bytes.ToArray()), WebSocketMessageType.Binary, true, CancellationToken.None);
-        }
+        await SendStringToSockets("RX");
     }
-    catch (Exception ex)
+    else if (bytesString.StartsWith("F5:35:00:3F"))
     {
-
+        await SendStringToSockets("BUSY");
     }
+    await SendStringToSockets("HEX:" + bytesString);
 }
 
 async Task SendStringToSockets(string text)
@@ -66,12 +64,12 @@ async Task SendStringToSockets(string text)
     {
         try
         {
-            var serverMsg = Encoding.UTF8.GetBytes("DSPL:" + text);
+            var serverMsg = Encoding.UTF8.GetBytes(text);
             await socket.SendAsync(new ArraySegment<byte>(serverMsg, 0, serverMsg.Length), WebSocketMessageType.Text, true, CancellationToken.None);
         }
         catch (Exception ex)
         {
-
+            Console.WriteLine("Cannot send string " + ex);
         }
     }
 }
@@ -177,7 +175,7 @@ try
             context.Response.StatusCode = 400;
         }
     });
-    app.UseWebSockets();
+    app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(5) });
     app.UseDefaultFiles();
     app.UseStaticFiles();
     app.Run();

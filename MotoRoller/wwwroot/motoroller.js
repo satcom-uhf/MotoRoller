@@ -6,42 +6,48 @@ function buf2hex(buffer) { // buffer is an ArrayBuffer
         .map(x => x.toString(16).padStart(2, '0'))
         .join(':');
 }
-var socket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
-socket.binaryType = "arraybuffer";
-socket.onerror = function (s, e) {
-    log(e);
-};
-socket.addEventListener('message', (event) => {
-    if (event.data instanceof ArrayBuffer) {
-        var bytes = buf2hex(event.data);
-        log(bytes);
-        if (bytes.indexOf("f5:35:00:3f")!=-1) {
-            document.getElementById("SQL").classList.remove("hidden");
+var socket;
+function connect() {
+    socket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
+    socket.binaryType = "arraybuffer";
+    socket.onerror = function (s, e) {
+        log(e);
+    };
+    socket.addEventListener('message', (event) => {
+        if (event.data instanceof ArrayBuffer) {
+            var bytes = buf2hex(event.data);
+            log(bytes);           
+        } else {
+            log(event.data);
+            var msg = event.data;
+            if (msg.startsWith("DSPL:")) {
+                msg = msg.replace("DSPL:", "");
+                document.getElementById("FREQ").innerText = msg;
+            }
+            else if (msg=="BUSY") {
+                document.getElementById("SQL").classList.remove("hidden");
+            }
+            else if (msg=="RX") {
+                document.getElementById("SQL").classList.add("hidden");
+            }
+            if (msg.toLowerCase().indexOf("f5:35:00:00:04:00:d1") != -1) {
+                document.getElementById("PWR").innerText = "H";
+            }
+            if (msg.toLowerCase().indexOf("f5:35:00:00:02:00:d3") != -1) {
+                document.getElementById("PWR").innerText = "L";
+            }
         }
-        if (bytes.indexOf("f5:35:03:ff")!=-1) {
-            document.getElementById("SQL").classList.add("hidden");
-        }
-        if (bytes.indexOf("f5:35:00:00:04:00:d1")!=-1) {
-            document.getElementById("PWR").innerText = "H";
-        }
-        if (bytes.indexOf("f5:35:00:00:02:00:d3")!=-1) {
-            document.getElementById("PWR").innerText = "L";
-        }
-    } else {
-
-        log('Message from server ' + event.data);
-        var msg = event.data;
-        if (msg.startsWith("DSPL:")) {
-            msg = msg.replace("DSPL:", "");
-            document.getElementById("FREQ").innerText = msg;
-        }
-        
-    }
-});
-socket.addEventListener('open', (event) => {
-    log('Connected');
-    socket.send('REFRESH');
-});
+    });
+    socket.addEventListener('open', (event) => {
+        log('Connected');
+        socket.send('REFRESH');
+    });
+    socket.addEventListener('close', (event) => {
+        log('Reconnecting');
+        setTimeout(() => connect(), 1000);
+    });
+}
+connect();
 var map = document.getElementById('image-map');
 map.addEventListener('mousedown', pressed, false);
 map.addEventListener('mouseup', free, false);

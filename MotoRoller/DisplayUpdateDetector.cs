@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using Newtonsoft.Json;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Text;
 
 namespace MotoRoller
@@ -6,9 +8,57 @@ namespace MotoRoller
     public class DisplayUpdateDetector
     {
         private List<byte> _currentMessage = new();
-        public event EventHandler MessageDetected;
+        private List<byte> _indicatorsUpd = new();
+        public event EventHandler DisplayUpdated;
         public ConcurrentDictionary<byte, string> DisplayRows { get; } = new();
+        public Indicators Indicators { get; } = new Indicators();
+
         public void AddByte(byte b)
+        {
+            if (b == 0x50)
+            {
+                _indicatorsUpd.Clear();
+                _currentMessage.Clear();
+                return;
+            }
+            HandleMainDisplayByte(b);
+            HandleIndicatorsUpd(b);
+        }
+
+        private void HandleIndicatorsUpd(byte b)
+        {
+            if (_indicatorsUpd.Count == 0 && b == 0xf5)
+            {
+                _indicatorsUpd.Add(b);
+                return;
+            }
+            else if (_indicatorsUpd.Count == 1 && b == 0x35)
+            {
+                _indicatorsUpd.Add(b);
+                return;
+            }
+            else if (_indicatorsUpd.Count > 1 && _indicatorsUpd.Count < 7)
+            {
+                _indicatorsUpd.Add(b);
+            }
+            if (_indicatorsUpd.Count == 7)
+            {
+                var opcode = _indicatorsUpd[2];
+                var full = string.Join(':', _indicatorsUpd.Select(x => x.ToString("X2")));
+                if (opcode == 0x00)
+                {
+                    Indicators.Update(_indicatorsUpd.Skip(3).Take(3).ToArray());                    
+                }
+                else if (opcode == 0x03)
+                {
+                    Indicators.Clear(_indicatorsUpd.Skip(3).Take(3).ToArray());
+                }
+                Console.WriteLine(JsonConvert.SerializeObject(Indicators));
+                _indicatorsUpd.Clear();
+            }
+        }
+
+        private void HandleMainDisplayByte(byte b)
         {
             if (_currentMessage.Count == 0 && b == 0xFF)
             {
@@ -34,9 +84,10 @@ namespace MotoRoller
             if (_currentMessage.Count > 6)
             {
                 var size = _currentMessage[3];
-                if (_currentMessage.Count == size + 3)
+                var finishSize = size + 3;
+                if (_currentMessage.Count >= finishSize)
                 {
-                    var line = Encoding.GetEncoding(866).GetString(_currentMessage.Skip(6).ToArray());
+                    var line = Encoding.GetEncoding(866).GetString(_currentMessage.Skip(6).Take(size - 3).ToArray());
                     DisplayRows[_currentMessage[5]] = line;
                     Console.WriteLine("Dislplay update detected:" + line);
                     Notify();
@@ -44,9 +95,10 @@ namespace MotoRoller
                 }
             }
         }
+
         private void Notify()
         {
-            MessageDetected?.Invoke(this, EventArgs.Empty);
+            DisplayUpdated?.Invoke(this, EventArgs.Empty);
         }
     }
 }
