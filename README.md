@@ -2,9 +2,10 @@
 
 MotoRoller - открытый некоммерческий проект сообщества Satcom Pirates.
 
-https://user-images.githubusercontent.com/90838159/184586941-a31bdfa4-f241-423a-8092-53ae73a0f0a8.mp4
+https://user-images.githubusercontent.com/90838159/185566490-f005dab4-c819-4e00-b075-5df05365bb3e.mp4
 
 Особая благодарность:
+
 
 YAMAL - идея, теоретическая подготовка, Motorola Confidential Proprietary документация
 
