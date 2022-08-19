@@ -1,6 +1,7 @@
 # MotoRoller: Motorola GM remote control
 
 MotoRoller - открытый некоммерческий проект сообщества Satcom Pirates.
+
 Для использования на ПК требуется стандартный шнур программирования. 
 Для работы на Raspberry/OrangePI требуется соединение UART с шиной BUS+ (17 pin)
 
