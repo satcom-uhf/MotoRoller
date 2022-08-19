@@ -1,4 +1,5 @@
 using MotoRoller;
+using Newtonsoft.Json;
 using System.Collections.Concurrent;
 using System.IO.Ports;
 using System.Net.WebSockets;
@@ -16,6 +17,12 @@ var detector = new DisplayUpdateDetector();
 detector.DisplayUpdated += (s, e) =>
 {
     _ = SendStringToSockets("DSPL:" + string.Join("\r\n", detector.DisplayRows.Values));
+};
+detector.IndicatorsUpdated += (s, e) =>
+{
+    var json = JsonConvert.SerializeObject(detector.Indicators);
+    _ = SendStringToSockets("ICONS:" + json);
+    Console.WriteLine(json);
 };
 port.DataReceived += (s, e) =>
  {
@@ -46,14 +53,6 @@ port.DataReceived += (s, e) =>
 async Task SendBytesToSockets(List<byte> bytes)
 {
     var bytesString = String.Join(':', bytes.Select(x => x.ToString("X2")));
-    if (bytesString.StartsWith("F5:35:03:FF"))
-    {
-        await SendStringToSockets("RX");
-    }
-    else if (bytesString.StartsWith("F5:35:00:3F"))
-    {
-        await SendStringToSockets("BUSY");
-    }
     await SendStringToSockets("HEX:" + bytesString);
 }
 
@@ -162,8 +161,8 @@ try
                 }
                 else if (request == "REFRESH")
                 {
-                    var serverMsg = Encoding.UTF8.GetBytes("DSPL:" + string.Join("\r\n", detector.DisplayRows.Values));
-                    await webSocket.SendAsync(new ArraySegment<byte>(serverMsg, 0, serverMsg.Length), result.MessageType, result.EndOfMessage, CancellationToken.None);
+                    await SendStringToSockets("ICONS:" + JsonConvert.SerializeObject(detector.Indicators));
+                    await SendStringToSockets("DSPL:" + string.Join("\r\n", detector.DisplayRows.Values));                    
                 }
                 result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             }

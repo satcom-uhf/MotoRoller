@@ -1,0 +1,239 @@
+@font-face {
+  font-family: 'wifi-quality-bars';
+  src:  url('fonts/wifi-quality-bars.eot?j7k8hy');
+  src:  url('fonts/wifi-quality-bars.eot?j7k8hy#iefix') format('embedded-opentype'),
+    url('fonts/wifi-quality-bars.ttf?j7k8hy') format('truetype'),
+    url('fonts/wifi-quality-bars.woff?j7k8hy') format('woff'),
+    url('fonts/wifi-quality-bars.svg?j7k8hy#wifi-quality-bars') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'wifi-quality-bars' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-wifi-quality_auth-locked:before {
+  content: "\e900";
+}
+.icon-wifi-quality_auth-shielded:before {
+  content: "\e901";
+}
+.icon-wifi-quality_auth-unlocked:before {
+  content: "\e902";
+}
+.icon-wifi-quality-bars_bars4a-1:before {
+  content: "\e903";
+}
+.icon-wifi-quality-bars_bars4a-2:before {
+  content: "\e904";
+}
+.icon-wifi-quality-bars_bars4a-3:before {
+  content: "\e905";
+}
+.icon-wifi-quality-bars_bars4a-4:before {
+  content: "\e906";
+}
+.icon-wifi-quality-bars_bars4b-1:before {
+  content: "\e907";
+}
+.icon-wifi-quality-bars_bars4b-2:before {
+  content: "\e908";
+}
+.icon-wifi-quality-bars_bars4b-3:before {
+  content: "\e909";
+}
+.icon-wifi-quality-bars_bars4c-1:before {
+  content: "\e90a";
+}
+.icon-wifi-quality-bars_bars4c-2:before {
+  content: "\e90b";
+}
+.icon-wifi-quality-bars_bars4c-3:before {
+  content: "\e90c";
+}
+.icon-wifi-quality-bars_bars4c-4:before {
+  content: "\e90d";
+}
+.icon-wifi-quality-bars_bars4d-1:before {
+  content: "\e90e";
+}
+.icon-wifi-quality-bars_bars4d-2:before {
+  content: "\e90f";
+}
+.icon-wifi-quality-bars_bars4d-3:before {
+  content: "\e910";
+}
+.icon-wifi-quality-bars_bars4e-1:before {
+  content: "\e911";
+}
+.icon-wifi-quality-bars_bars4e-2:before {
+  content: "\e912";
+}
+.icon-wifi-quality-bars_bars4e-3:before {
+  content: "\e913";
+}
+.icon-wifi-quality-bars_bars4e-4:before {
+  content: "\e914";
+}
+.icon-wifi-quality-bars_bars4f-1:before {
+  content: "\e915";
+}
+.icon-wifi-quality-bars_bars4f-2:before {
+  content: "\e916";
+}
+.icon-wifi-quality-bars_bars4f-3:before {
+  content: "\e917";
+}
+.icon-wifi-quality-bars_bars4g-1:before {
+  content: "\e918";
+}
+.icon-wifi-quality-bars_bars4g-2:before {
+  content: "\e919";
+}
+.icon-wifi-quality-bars_bars4g-3:before {
+  content: "\e91a";
+}
+.icon-wifi-quality-bars_bars4g-4:before {
+  content: "\e91b";
+}
+.icon-wifi-quality-bars_bars4h-1:before {
+  content: "\e91c";
+}
+.icon-wifi-quality-bars_bars4h-2:before {
+  content: "\e91d";
+}
+.icon-wifi-quality-bars_bars4h-3:before {
+  content: "\e91e";
+}
+.icon-wifi-quality-bars_bars5a-1:before {
+  content: "\e91f";
+}
+.icon-wifi-quality-bars_bars5a-2:before {
+  content: "\e920";
+}
+.icon-wifi-quality-bars_bars5a-3:before {
+  content: "\e921";
+}
+.icon-wifi-quality-bars_bars5a-4:before {
+  content: "\e922";
+}
+.icon-wifi-quality-bars_bars5a-5:before {
+  content: "\e923";
+}
+.icon-wifi-quality-bars_bars5b-0:before {
+    content: "\e924";
+}
+.icon-wifi-quality-bars_bars5b-1:before {
+    content: "\e924";
+}
+.icon-wifi-quality-bars_bars5b-2:before {
+  content: "\e925";
+}
+.icon-wifi-quality-bars_bars5b-3:before {
+  content: "\e926";
+}
+.icon-wifi-quality-bars_bars5b-4:before {
+  content: "\e927";
+}
+.icon-wifi-quality-bars_bars5b-5:before {
+    content: "\e923";
+}
+.icon-wifi-quality-bars_bars5c-1:before {
+  content: "\e928";
+}
+.icon-wifi-quality-bars_bars5c-2:before {
+  content: "\e929";
+}
+.icon-wifi-quality-bars_bars5c-3:before {
+  content: "\e92a";
+}
+.icon-wifi-quality-bars_bars5c-4:before {
+  content: "\e92b";
+}
+.icon-wifi-quality-bars_bars5c-5:before {
+  content: "\e92c";
+}
+.icon-wifi-quality-bars_bars5d-1:before {
+  content: "\e92d";
+}
+.icon-wifi-quality-bars_bars5d-2:before {
+  content: "\e92e";
+}
+.icon-wifi-quality-bars_bars5d-3:before {
+  content: "\e92f";
+}
+.icon-wifi-quality-bars_bars5d-4:before {
+  content: "\e930";
+}
+.icon-wifi-quality-bars_bars5e-1:before {
+  content: "\e931";
+}
+.icon-wifi-quality-bars_bars5e-2:before {
+  content: "\e932";
+}
+.icon-wifi-quality-bars_bars5e-3:before {
+  content: "\e933";
+}
+.icon-wifi-quality-bars_bars5e-4:before {
+  content: "\e934";
+}
+.icon-wifi-quality-bars_bars5e-5:before {
+  content: "\e935";
+}
+.icon-wifi-quality-bars_bars5f-1:before {
+  content: "\e936";
+}
+.icon-wifi-quality-bars_bars5f-2:before {
+  content: "\e937";
+}
+.icon-wifi-quality-bars_bars5f-3:before {
+  content: "\e938";
+}
+.icon-wifi-quality-bars_bars5f-4:before {
+  content: "\e939";
+}
+.icon-wifi-quality-bars_bars5g-1:before {
+  content: "\e93a";
+}
+.icon-wifi-quality-bars_bars5g-2:before {
+  content: "\e93b";
+}
+.icon-wifi-quality-bars_bars5g-3:before {
+  content: "\e93c";
+}
+.icon-wifi-quality-bars_bars5g-4:before {
+  content: "\e93d";
+}
+.icon-wifi-quality-bars_bars5g-5:before {
+  content: "\e93e";
+}
+.icon-wifi-quality-bars_bars5h-1:before {
+  content: "\e93f";
+}
+.icon-wifi-quality-bars_bars5h-2:before {
+  content: "\e940";
+}
+.icon-wifi-quality-bars_bars5h-3:before {
+  content: "\e941";
+}
+.icon-wifi-quality-bars_bars5h-4:before {
+  content: "\e942";
+}
+.icon-wifi-quality-z1:before {
+  content: "\e943";
+}
+.icon-wifi-quality-z2:before {
+  content: "\e944";
+}

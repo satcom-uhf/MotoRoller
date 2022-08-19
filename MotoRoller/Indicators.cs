@@ -7,11 +7,11 @@ namespace MotoRoller
         private BitArray _bits = new BitArray(new byte[3]);
         public void Update(byte[] bytes)
         {
-            _bits = new BitArray(bytes);
+            _bits = new BitArray(bytes.Reverse().ToArray());
         }
         public void Clear(byte[] mask)
         {
-            var bitArray = new BitArray(mask);
+            var bitArray = new BitArray(mask.Reverse().ToArray());
             for (int i = 0; i < bitArray.Length; i++)
             {
                 if (bitArray.Get(i))
@@ -42,6 +42,6 @@ namespace MotoRoller
         public bool OptionBoard => Bit(23);
         public bool XPAND2 => Bit(24);
 
-        private bool Bit(int bitNumber) => _bits.Get(bitNumber - 1);
+        private bool Bit(int bitNumber) => _bits.Get(bitNumber-1);
     }
 }

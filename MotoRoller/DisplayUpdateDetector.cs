@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Text;
 
@@ -10,6 +9,7 @@ namespace MotoRoller
         private List<byte> _currentMessage = new();
         private List<byte> _indicatorsUpd = new();
         public event EventHandler DisplayUpdated;
+        public event EventHandler IndicatorsUpdated;
         public ConcurrentDictionary<byte, string> DisplayRows { get; } = new();
         public Indicators Indicators { get; } = new Indicators();
 
@@ -44,7 +44,6 @@ namespace MotoRoller
             if (_indicatorsUpd.Count == 7)
             {
                 var opcode = _indicatorsUpd[2];
-                var full = string.Join(':', _indicatorsUpd.Select(x => x.ToString("X2")));
                 if (opcode == 0x00)
                 {
                     Indicators.Update(_indicatorsUpd.Skip(3).Take(3).ToArray());                    
@@ -53,7 +52,7 @@ namespace MotoRoller
                 {
                     Indicators.Clear(_indicatorsUpd.Skip(3).Take(3).ToArray());
                 }
-                Console.WriteLine(JsonConvert.SerializeObject(Indicators));
+                IndicatorsUpdated?.Invoke(this, EventArgs.Empty);
                 _indicatorsUpd.Clear();
             }
         }

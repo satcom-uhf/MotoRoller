@@ -13,10 +13,13 @@ function connect() {
     socket.onerror = function (s, e) {
         log(e);
     };
+    function setVisibility(el, flag) {
+        document.getElementById(el).style.visibility = flag ? 'visible' : 'hidden';
+    }
     socket.addEventListener('message', (event) => {
         if (event.data instanceof ArrayBuffer) {
             var bytes = buf2hex(event.data);
-            log(bytes);           
+            log(bytes);
         } else {
             log(event.data);
             var msg = event.data;
@@ -24,10 +27,22 @@ function connect() {
                 msg = msg.replace("DSPL:", "");
                 document.getElementById("FREQ").innerText = msg;
             }
-            else if (msg=="BUSY") {
+            else if (msg.startsWith("ICONS:")) {
+                msg = msg.replace("ICONS:", "");
+                var icons = JSON.parse(msg);
+                setVisibility("Antenna", icons.Antenna);
+                var level = [icons.S1, icons.S2, icons.S3, icons.S4, icons.S5].filter(Boolean).length;
+                setVisibility("RSSI", level > 0);
+                document.getElementById("RSSI").className = `icon-wifi-quality-bars_bars5b-${level}`;
+                setVisibility("Monitor", icons.Monitor);
+                var scanStatus = icons.Scan ? 'Z' : ' ';
+                var priorityScan = icons.ScanDot ? '.' : '';
+                document.getElementById('Scan').innerText = scanStatus + priorityScan;
+            }
+            else if (msg == "BUSY") {
                 document.getElementById("SQL").classList.remove("hidden");
             }
-            else if (msg=="RX") {
+            else if (msg == "RX") {
                 document.getElementById("SQL").classList.add("hidden");
             }
             if (msg.toLowerCase().indexOf("f5:35:00:00:04:00:d1") != -1) {
