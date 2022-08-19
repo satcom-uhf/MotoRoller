@@ -38,18 +38,7 @@ function connect() {
                 var scanStatus = icons.Scan ? 'Z' : ' ';
                 var priorityScan = icons.ScanDot ? '.' : '';
                 document.getElementById('Scan').innerText = scanStatus + priorityScan;
-            }
-            else if (msg == "BUSY") {
-                document.getElementById("SQL").classList.remove("hidden");
-            }
-            else if (msg == "RX") {
-                document.getElementById("SQL").classList.add("hidden");
-            }
-            if (msg.toLowerCase().indexOf("f5:35:00:00:04:00:d1") != -1) {
-                document.getElementById("PWR").innerText = "H";
-            }
-            if (msg.toLowerCase().indexOf("f5:35:00:00:02:00:d3") != -1) {
-                document.getElementById("PWR").innerText = "L";
+                document.getElementById("PWR").innerText = icons.HighPower?'H':'L';
             }
         }
     });
