@@ -36,7 +36,10 @@ function connect() {
                     {}
                 );
                 var dspl = "";
+                var lines = 0;
                 for (let p in ordered) {
+                    lines++;
+                    if (lines > 3) break;
                     dspl += ordered[p] + "\r\n";
                 }
                 document.getElementById("FREQ").innerText = dspl;
