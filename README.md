@@ -10,7 +10,8 @@ https://user-images.githubusercontent.com/90838159/185566490-f005dab4-c819-4e00-
 
 Особая благодарность:
 
-
 YAMAL - идея, теоретическая подготовка, Motorola Confidential Proprietary документация
 
 TURBINA - главный тестировщик
+
+OBERON - Тестирование на GM1280
