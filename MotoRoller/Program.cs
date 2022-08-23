@@ -16,7 +16,7 @@ List<byte> message = new List<byte>();
 var detector = new DisplayUpdateDetector();
 detector.DisplayUpdated += (s, e) =>
 {
-    _ = SendStringToSockets("DSPL:" + string.Join("\r\n", detector.DisplayRows.Values));
+    _= SendStringToSockets("DSPL:" + JsonConvert.SerializeObject(detector.DisplayRows));
 };
 detector.IndicatorsUpdated += (s, e) =>
 {
@@ -162,7 +162,7 @@ try
                 else if (request == "REFRESH")
                 {
                     await SendStringToSockets("ICONS:" + JsonConvert.SerializeObject(detector.Indicators));
-                    await SendStringToSockets("DSPL:" + string.Join("\r\n", detector.DisplayRows.Values));                    
+                    await SendStringToSockets("DSPL:" + JsonConvert.SerializeObject(detector.DisplayRows));                    
                 }
                 result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             }

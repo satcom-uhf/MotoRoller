@@ -10,7 +10,8 @@ namespace MotoRoller
         private List<byte> _indicatorsUpd = new();
         public event EventHandler DisplayUpdated;
         public event EventHandler IndicatorsUpdated;
-        public ConcurrentDictionary<byte, string> DisplayRows { get; } = new();
+        public ConcurrentDictionary<string, string> DisplayRows { get; } = new();
+        public string DisplayText => string.Join("\r\n", DisplayRows.OrderBy(x => x.Key).Select(x => x.Value));
         public Indicators Indicators { get; } = new Indicators();
 
         public void AddByte(byte b)
@@ -46,7 +47,7 @@ namespace MotoRoller
                 var opcode = _indicatorsUpd[2];
                 if (opcode == 0x00)
                 {
-                    Indicators.Update(_indicatorsUpd.Skip(3).Take(3).ToArray());                    
+                    Indicators.Update(_indicatorsUpd.Skip(3).Take(3).ToArray());
                 }
                 else if (opcode == 0x03)
                 {
@@ -87,8 +88,12 @@ namespace MotoRoller
                 if (_currentMessage.Count >= finishSize)
                 {
                     var line = Encoding.GetEncoding(866).GetString(_currentMessage.Skip(6).Take(size - 3).ToArray());
-                    DisplayRows[_currentMessage[5]] = line;
-                    Console.WriteLine("Dislplay update detected:" + line);
+                    var lineAddress = "Line" + _currentMessage[4].ToString("X2");
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        DisplayRows[lineAddress] = line;
+                    }
+                    Console.WriteLine($"Dislplay {lineAddress} update detected:" + line);
                     Notify();
                     _currentMessage.Clear();
                 }

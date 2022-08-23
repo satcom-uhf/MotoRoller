@@ -1,5 +1,6 @@
 ﻿function log(msg) {
-    document.getElementById("log").prepend(msg, document.createElement("br"));
+    //document.getElementById("log").prepend(msg, document.createElement("br"));
+    console.info(msg);
 }
 function buf2hex(buffer) { // buffer is an ArrayBuffer
     return [...new Uint8Array(buffer)]
@@ -25,7 +26,20 @@ function connect() {
             var msg = event.data;
             if (msg.startsWith("DSPL:")) {
                 msg = msg.replace("DSPL:", "");
-                document.getElementById("FREQ").innerText = msg;
+                var unordered = JSON.parse(msg);
+                console.warn(unordered);
+                const ordered = Object.keys(unordered).sort().reduce(
+                    (obj, key) => {
+                        obj[key] = unordered[key];
+                        return obj;
+                    },
+                    {}
+                );
+                var dspl = "";
+                for (let p in ordered) {
+                    dspl += ordered[p] + "\r\n";
+                }
+                document.getElementById("FREQ").innerText = dspl;
             }
             else if (msg.startsWith("ICONS:")) {
                 msg = msg.replace("ICONS:", "");
