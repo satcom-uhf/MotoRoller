@@ -12,7 +12,7 @@ const PHONE = window.PHONE = config => {
     const subkey        = config.subscribe_key || 'demo';
     const autocam       = config.autocam !== false;
     const sessionid     = uuid();
-    const mediaconf     = config.media || { audio : true, video : true };
+    const mediaconf     = config.media || { audio : true, video : false };
     const conversations = {};
     let   myvideo       = document.createElement('video');
     let   snapper       = ()=>' ';
