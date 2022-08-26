@@ -2,7 +2,7 @@
 
 MotoRoller - открытый некоммерческий проект сообщества Satcom Pirates.
 
-https://user-images.githubusercontent.com/90838159/185566490-f005dab4-c819-4e00-b075-5df05365bb3e.mp4
+https://user-images.githubusercontent.com/90838159/186971130-ab151ed4-0c0b-4ded-856b-98d162e6c4db.mp4
 
 Инструкция по настройке на странице последнего релиза https://github.com/satcom-uhf/MotoRoller/releases/tag/MotorollerV2
 
