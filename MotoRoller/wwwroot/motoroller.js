@@ -17,6 +17,7 @@ function connect() {
     function setVisibility(el, flag) {
         document.getElementById(el).style.visibility = flag ? 'visible' : 'hidden';
     }
+
     socket.addEventListener('message', (event) => {
         if (event.data instanceof ArrayBuffer) {
             var bytes = buf2hex(event.data);
@@ -55,7 +56,7 @@ function connect() {
                 var scanStatus = icons.Scan ? 'Z' : ' ';
                 var priorityScan = icons.ScanDot ? '.' : '';
                 document.getElementById('Scan').innerText = scanStatus + priorityScan;
-                document.getElementById("PWR").innerText = icons.HighPower?'H':'L';
+                document.getElementById("PWR").innerText = icons.HighPower ? 'H' : 'L';
             }
         }
     });
@@ -69,6 +70,12 @@ function connect() {
     });
 }
 connect();
+var map = document.getElementById('ptt');
+map.addEventListener('mousedown', (e) => { e.preventDefault(); sendpress("ptt"); }, false);
+map.addEventListener('mouseup', (e) => { e.preventDefault(); sendfree("ptt"); }, false);
+map.addEventListener('touchstart', (e) => { e.preventDefault(); sendpress("ptt"); }, false);
+map.addEventListener('touchend', (e) => { e.preventDefault(); sendfree("ptt"); }, false);
+
 var map = document.getElementById('image-map');
 map.addEventListener('mousedown', pressed, false);
 map.addEventListener('mouseup', free, false);
@@ -89,14 +96,30 @@ function free(e) {
     }
     e.stopPropagation();
 }
-function send(url) {
-
-    socket.send(url);
+function sendString(data) {
+    socket.send(data);
 }
 function sendpress(button) {
-    send(`press/${button}`);
+    sendString(`press/${button}`);
 }
 function sendfree(button) {
-    send(`free/${button}`);
+    sendString(`free/${button}`);
 }
+
 imageMapResize();
+
+
+/////sound
+
+////our username 
+var name;
+var connectedUser;
+function send(data) {
+    if (connectedUser) {
+        data.name = connectedUser;
+    } 
+    sendString(JSON.stringify(data))
+}
+PHONE.send = send;
+
+
