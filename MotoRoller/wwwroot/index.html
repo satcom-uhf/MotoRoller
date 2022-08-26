@@ -48,7 +48,7 @@
     <img class="front" src="GM380-front.png" usemap="#image-map">
     <div id="LCD">
         <div id="Indicators">
-            <span id="Antenna">       
+            <span id="Antenna">
                 &nbsp;
             </span>
             <span id="RSSI" class="icon-wifi-quality-bars_bars5b-3"></span>
@@ -85,7 +85,141 @@
         <area target="" alt="F2" title="F2" href="javascript:void(0);" coords="1467,483,1580,548" shape="rect">
         <area target="" alt="F3" title="F3" href="javascript:void(0);" coords="1608,480,1723,543" shape="rect">
     </map>
+
     <span id="log"></span>
+    <!--<div id="loginPage" class="container text-center">
+
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+
+                <h2>WebRTC Voice Demo. Please sign in</h2>
+
+                <label for="usernameInput" class="sr-only">Login</label>
+                <input type="email" id="usernameInput"
+                       class="form-control formgroup"
+                       placeholder="Login" required="" autofocus="">
+                <button id="loginBtn" class="btn btn-lg btn-primary btnblock">
+                    Sign in
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="callPage" class="call-page">
+
+        <div class="row">
+
+            <div class="col-md-6 text-right">
+                Local audio: <audio id="localAudio"
+                                    controls autoplay></audio>
+            </div>
+
+            <div class="col-md-6 text-left">
+                Remote audio: <audio id="remoteAudio"
+                                     controls autoplay></audio>
+            </div>
+
+        </div>
+
+        <div class="row text-center">
+            <div class="col-md-12">
+                <input id="callToUsernameInput"
+                       type="text" placeholder="username to call" />
+                <button id="callBtn" class="btn-success btn">Call</button>
+                <button id="hangUpBtn" class="btn-danger btn">Hang Up</button>
+            </div>
+        </div>
+
+    </div>-->
     <script src="motoroller.js"></script>
+    <!-- your number -->
+    <div id="number"></div>
+
+    <!-- camera -->
+    <div><button id="startcam">Start Camera</button></div>
+    <div><button id="stopcam">Stop Camera</button></div>
+
+    <!-- dialer/calling -->
+    <div><button id="startcall">Start Call</button><input id="dial"></div>
+    <div><button id="stopcall">Stop Call</button></div>
+
+    <!-- Video Feeds -->
+    <div id="video-out"></div>
+
+    <!-- Libs and Scripts -->
+    <script src="webrtc-v2.js"></script>
+    <script>
+    (() => {
+            'use strict';
+
+            // ~Warning~ You must get your own API Keys for non-demo purposes.
+            // ~Warning~ Get your PubNub API Keys: https://www.pubnub.com/get-started/
+            // The phone *number* can by any string value
+
+            let session = null;
+            const number = Math.ceil(Math.random() * 10000);
+            const phone = PHONE({
+                number: number
+                , autocam: false
+                , publish_key: 'pub-c-561a7378-fa06-4c50-a331-5c0056d0163c'
+                , subscribe_key: 'sub-c-17b7db8a-3915-11e4-9868-02ee2ddab7fe'
+            });
+
+            // Debugging Output
+            phone.debug(info => console.info(info));
+
+            // Show Number
+            phone.$('number').innerHTML = 'Number: ' + number;
+
+            // Start Camera
+            phone.bind(
+                'mousedown,touchstart'
+                , phone.$('startcam')
+                , event => phone.camera.start()
+            );
+
+            // Stop Camera
+            phone.bind(
+                'mousedown,touchstart'
+                , phone.$('stopcam')
+                , event => phone.camera.stop()
+            );
+
+            // Local Camera Display
+            phone.camera.ready(video => {
+                phone.$('video-out').appendChild(video);
+            });
+
+            // As soon as the phone is ready we can make calls
+            phone.ready(() => {
+
+                // Start Call
+                phone.bind(
+                    'mousedown,touchstart'
+                    , phone.$('startcall')
+                    , event => session = phone.dial(phone.$('dial').value)
+                );
+
+                // Stop Call
+                phone.bind(
+                    'mousedown,touchstart'
+                    , phone.$('stopcall')
+                    , event => phone.hangup()
+                );
+
+            });
+
+            // When Call Comes In or is to be Connected
+            phone.receive(function (session) {
+
+                // Display Your Friend's Live Video
+                session.connected(function (session) {
+                    phone.$('video-out').appendChild(session.video);
+                });
+
+            });
+
+        })();</script>
 </body>
 </html>

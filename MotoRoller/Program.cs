@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Features;
 using MotoRoller;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;
@@ -16,7 +17,7 @@ List<byte> message = new List<byte>();
 var detector = new DisplayUpdateDetector();
 detector.DisplayUpdated += (s, e) =>
 {
-    _= SendStringToSockets("DSPL:" + JsonConvert.SerializeObject(detector.DisplayRows));
+    _ = SendStringToSockets("DSPL:" + JsonConvert.SerializeObject(detector.DisplayRows));
 };
 detector.IndicatorsUpdated += (s, e) =>
 {
@@ -59,25 +60,32 @@ async Task SendBytesToSockets(List<byte> bytes)
 async Task SendStringToSockets(string text)
 {
 
-    foreach (var socket in sockets)
+    foreach (var socket in sockets.ToArray())
     {
         try
         {
-            var serverMsg = Encoding.UTF8.GetBytes(text);
-            await socket.SendAsync(new ArraySegment<byte>(serverMsg, 0, serverMsg.Length), WebSocketMessageType.Text, true, CancellationToken.None);
+            await SendToSocket(socket, text);
         }
         catch (Exception ex)
         {
+            sockets.Remove(socket);
             Console.WriteLine("Cannot send string " + ex);
         }
     }
+}
+
+async static Task SendToSocket(WebSocket socket, string text)
+{
+    var serverMsg = Encoding.UTF8.GetBytes(text);
+    await socket.SendAsync(new ArraySegment<byte>(serverMsg, 0, serverMsg.Length), WebSocketMessageType.Text, true, CancellationToken.None);
+
 }
 
 try
 {
     var life = app.Services.GetRequiredService<IHostApplicationLifetime>();
     life.ApplicationStopped.Register(() => port.Close());
-    port.Open();
+    //port.Open();
     var buttons = new ConcurrentDictionary<string, byte>();
     buttons["ptt"] = 0x00;
     buttons["right"] = 0x02;
@@ -128,7 +136,7 @@ try
         }
     }
     _ = ExecuteClickCommands();
-
+    ConcurrentDictionary<string, WebSocket> users = new ConcurrentDictionary<string, WebSocket>();
     app.MapGet("/ws", async (HttpContext context) =>
     {
         if (context.WebSockets.IsWebSocketRequest)
@@ -162,7 +170,68 @@ try
                 else if (request == "REFRESH")
                 {
                     await SendStringToSockets("ICONS:" + JsonConvert.SerializeObject(detector.Indicators));
-                    await SendStringToSockets("DSPL:" + JsonConvert.SerializeObject(detector.DisplayRows));                    
+                    await SendStringToSockets("DSPL:" + JsonConvert.SerializeObject(detector.DisplayRows));
+                }
+                else
+                {
+                    var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(request);
+                    if (dict.TryGetValue("type", out var type))
+                    {
+                        switch (type)
+                        {
+                            case "login":
+                                Console.WriteLine(dict["name"] + " logged in");
+                                await SendToSocket(webSocket, JsonConvert.SerializeObject(new
+                                {
+                                    type = "login",
+                                    success = true
+                                }));
+                                users[dict["name"].ToString()] = webSocket;
+                                break;
+                            case "offer":
+                                {
+                                    if (users.TryGetValue(dict["name"].ToString(), out var conn))
+                                    {
+                                        Console.WriteLine(dict["name"] + " offer");
+                                        await SendToSocket(conn, JsonConvert.SerializeObject(new
+                                        {
+                                            type = "offer",
+                                            offer = dict["offer"],
+                                            name = dict["name"]
+                                        }));
+                                    }
+                                }
+                                break;
+                            case "answer":
+                                {
+                                    if (users.TryGetValue(dict["name"].ToString(), out var conn))
+                                    {
+                                        Console.WriteLine(dict["name"] + " answer");
+                                        await SendToSocket(conn, JsonConvert.SerializeObject(new
+                                        {
+                                            type = "answer",
+                                            answer = dict["answer"]
+                                        }));
+                                    }
+                                }
+                                break;
+                            case "candidate":
+                                {
+                                    if (users.TryGetValue(dict["name"].ToString(), out var conn))
+                                    {
+                                        Console.WriteLine(dict["name"] + " candidate");
+                                        await SendToSocket(conn, JsonConvert.SerializeObject(new
+                                        {
+                                            type = "candidate",
+                                            candidate = dict["candidate"]
+                                        }));
+                                    }
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
                 result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
             }
