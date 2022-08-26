@@ -57,30 +57,6 @@ function connect() {
                 var priorityScan = icons.ScanDot ? '.' : '';
                 document.getElementById('Scan').innerText = scanStatus + priorityScan;
                 document.getElementById("PWR").innerText = icons.HighPower ? 'H' : 'L';
-            } else {
-                var data = JSON.parse(msg);
-
-                switch (data.type) {
-                    case "login":
-                        handleLogin(data.success);
-                        break;
-                    //when somebody wants to call us 
-                    case "offer":
-                        handleOffer(data.offer, data.name);
-                        break;
-                    case "answer":
-                        handleAnswer(data.answer);
-                        break;
-                    //when a remote peer sends an ice candidate to us 
-                    case "candidate":
-                        handleCandidate(data.candidate);
-                        break;
-                    case "leave":
-                        handleLeave();
-                        break;
-                    default:
-                        break;
-                }
             }
         }
     });
@@ -94,6 +70,12 @@ function connect() {
     });
 }
 connect();
+var map = document.getElementById('ptt');
+map.addEventListener('mousedown', (e) => { e.preventDefault(); sendpress("ptt"); }, false);
+map.addEventListener('mouseup', (e) => { e.preventDefault(); sendfree("ptt"); }, false);
+map.addEventListener('touchstart', (e) => { e.preventDefault(); sendpress("ptt"); }, false);
+map.addEventListener('touchend', (e) => { e.preventDefault(); sendfree("ptt"); }, false);
+
 var map = document.getElementById('image-map');
 map.addEventListener('mousedown', pressed, false);
 map.addEventListener('mouseup', free, false);

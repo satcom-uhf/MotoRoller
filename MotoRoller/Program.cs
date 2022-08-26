@@ -85,7 +85,7 @@ try
 {
     var life = app.Services.GetRequiredService<IHostApplicationLifetime>();
     life.ApplicationStopped.Register(() => port.Close());
-   // port.Open();
+    port.Open();
     var buttons = new ConcurrentDictionary<string, byte>();
     buttons["ptt"] = 0x00;
     buttons["right"] = 0x02;
