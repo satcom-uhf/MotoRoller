@@ -94,7 +94,7 @@
 
     <!-- dialer/calling -->
     <div><button id="startcall">Start Call</button><input id="dial"></div>
-    <div><button id="stopcall">Stop Call</button></div>
+    <div><button id="fullscreen">Fullscreen</button></div>
 
     <!-- Video Feeds -->
     <div id="video-out"></div>
@@ -155,8 +155,14 @@
                 // Stop Call
                 phone.bind(
                     'mousedown,touchstart'
-                    , phone.$('stopcall')
-                    , event => phone.hangup()
+                    , phone.$('fullscreen')
+                    , event => {
+                        if ('wakeLock' in navigator) {
+                            navigator.wakeLock.request();
+                        }
+                        document.querySelector("body").requestFullscreen();
+                        
+                    }
                 );
 
             });
