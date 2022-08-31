@@ -14,8 +14,7 @@ const PHONE = window.PHONE = config => {
     const sessionid     = uuid();
     const mediaconf     = config.media || { audio : true, video : false };
     const conversations = {};
-    let   myvideo       = document.createElement('video');
-    let   snapper       = ()=>' ';
+    let   myvideo       = document.createElement('audio');
     let   mystream      = null;
     let   myconnection  = false;
 
@@ -165,17 +164,7 @@ const PHONE = window.PHONE = config => {
                 transmit( number, { usermsg : message } );
             };
 
-            // Sending Stanpshots
-            talk.snap = () => {
-                let pic = snapper();
-                transmit( number, { thumbnail : pic } );
-                let img = document.createElement('img');
-                img.src = pic;
-                return { data : pic, image : img };
-            };
-
-            // Take One Snapshot
-            talk.snap();
+           
 
             // Nice Accessor to Update Disconnect & Establis CBs
             talk.thumbnail = cb => {talk.thumb   = cb; return talk};
@@ -301,16 +290,7 @@ const PHONE = window.PHONE = config => {
         // Return Session Reference
         return talk;
     };
-
-    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-    // Send Image Snap - Send Image Snap to All Calls or a Specific Call
-    // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-    PHONE.snap = function( message, number ) {
-        if (number) return get_conversation(number).snap(message);
-        let pic = {};
-        for (let number in conversations) pic = conversations[number].snap();
-        return pic;
-    };
+   
 
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // Send Message - Send Message to All Calls or a Specific Call
@@ -359,39 +339,22 @@ const PHONE = window.PHONE = config => {
     // Grab Local Video Snapshot
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     function snapshots_setup(stream) {
-        let video   = myvideo || document.createElement('video');
-        let canvas  = document.createElement('canvas');
-        let context = canvas.getContext("2d");
-        let snap    = { width: 240, height: 180 };
-
+        let video   = myvideo || document.createElement('audio');
+        
         // Video Settings
-        video.width     = snap.width;
-        video.height    = snap.height;
         video.srcObject = stream;
         video.volume    = 0.0;
 
         // Start Video Stream
         try { video.play() }
-        catch(e) { debugcb(["video.play(FAIL)", e]) }
-
-        // Canvas Settings
-        canvas.width  = snap.width;
-        canvas.height = snap.height;
-
-        // Capture Local Pic
-        snapper = () => {
-            try {
-                context.drawImage( video, 0, 0, snap.width, snap.height );
-            } catch(e) { debugcb(["context.drawImage(FAIL)", e]) }
-            return canvas.toDataURL( 'image/jpeg', 0.30 );
-        };
+        catch(e) { debugcb(["video.play(FAIL)", e]) }        
     }
 
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     // Visually Display New Stream
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     function onaddstream( number, obj ) {
-        let vid    = document.createElement('video');
+        let vid    = document.createElement('audio');
         let talk   = get_conversation(number);
 
         vid.setAttribute( 'autoplay',    'autoplay'    );
