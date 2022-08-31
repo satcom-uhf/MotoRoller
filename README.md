@@ -12,6 +12,6 @@ https://user-images.githubusercontent.com/90838159/186971130-ab151ed4-0c0b-4ded-
 
 YAMAL - идея, теоретическая подготовка, Motorola Confidential Proprietary документация
 
-TURBINA - главный тестировщик
+TURBINA, 999 - тестирование
 
 OBERON, Oxotnuk и Радуга - за предоставленное оборудование
