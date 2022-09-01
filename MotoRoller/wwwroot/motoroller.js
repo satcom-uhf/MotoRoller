@@ -1,4 +1,11 @@
-﻿function log(msg) {
+﻿let ptt = document.getElementById('ptt');
+
+function setCoords() {
+    let coords = document.getElementById('pttZone').getAttribute('coords').split(',').map(Number);
+    ptt.style.left = coords[0] + 'px';
+    ptt.style.top = coords[1] + 'px';
+}
+function log(msg) {
     //document.getElementById("log").prepend(msg, document.createElement("br"));
     console.info(msg);
 }
@@ -70,11 +77,13 @@ function connect() {
     });
 }
 connect();
-var map = document.getElementById('ptt');
-map.addEventListener('mousedown', (e) => { e.preventDefault(); sendpress("ptt"); }, false);
-map.addEventListener('mouseup', (e) => { e.preventDefault(); sendfree("ptt"); }, false);
-map.addEventListener('touchstart', (e) => { e.preventDefault(); sendpress("ptt"); }, false);
-map.addEventListener('touchend', (e) => { e.preventDefault(); sendfree("ptt"); }, false);
+window.addEventListener('resize', () => setTimeout(setCoords, 300));
+function pressPtt() { sendpress("ptt"); }
+function freePtt() { sendpress("ptt"); }
+ptt.addEventListener('mousedown', (e) => { e.preventDefault(); pressPtt(); }, false);
+ptt.addEventListener('mouseup', (e) => { e.preventDefault(); freePtt(); }, false);
+ptt.addEventListener('touchstart', (e) => { e.preventDefault(); pressPtt(); }, false);
+ptt.addEventListener('touchend', (e) => { e.preventDefault(); freePtt(); }, false);
 
 var map = document.getElementById('image-map');
 map.addEventListener('mousedown', pressed, false);
@@ -107,7 +116,7 @@ function sendfree(button) {
 }
 
 imageMapResize();
-
+setCoords();
 
 /////sound
 
