@@ -1,5 +1,5 @@
 ﻿let ptt = document.getElementById('ptt');
-
+let moto = new URL(window.location.href).searchParams.has("moto");
 function setCoords() {
     let coords = document.getElementById('pttZone').getAttribute('coords').split(',').map(Number);
     ptt.style.left = coords[0] + 'px';
@@ -155,7 +155,7 @@ PHONE.send = send;
 
     // Show Number
     phone.$('number').innerHTML = 'Number: ' + number;
-    phone.camera.start().then(() => phone.camera.manageAudio(false));
+    phone.camera.start().then(() => phone.camera.manageAudio(moto));
 
     // Local Camera Display
     phone.camera.ready(video => {
