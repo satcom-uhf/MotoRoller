@@ -1,4 +1,11 @@
-﻿function log(msg) {
+﻿let ptt = document.getElementById('ptt');
+let moto = new URL(window.location.href).searchParams.has("moto");
+//function setCoords() {
+//    let coords = document.getElementById('pttZone').getAttribute('coords').split(',').map(Number);
+//    //ptt.style.left = coords[0] + 'px';
+//    //ptt.style.top = coords[1] + 'px';
+//}
+function log(msg) {
     //document.getElementById("log").prepend(msg, document.createElement("br"));
     console.info(msg);
 }
@@ -70,15 +77,8 @@ function connect() {
     });
 }
 connect();
-var map = document.getElementById('ptt');
-map.addEventListener('mousedown', (e) => { e.preventDefault(); sendpress("ptt"); }, false);
-map.addEventListener('mouseup', (e) => { e.preventDefault(); sendfree("ptt"); }, false);
-map.addEventListener('touchstart', (e) => { e.preventDefault(); sendpress("ptt"); }, false);
-map.addEventListener('touchend', (e) => { e.preventDefault(); sendfree("ptt"); }, false);
+//window.addEventListener('resize', () => setTimeout(setCoords, 500));
 
-var map = document.getElementById('image-map');
-map.addEventListener('mousedown', pressed, false);
-map.addEventListener('mouseup', free, false);
 function pressed(e) {
     e.preventDefault();
     if (e.target !== e.currentTarget) {
@@ -88,6 +88,9 @@ function pressed(e) {
     }
     e.stopPropagation();
 }
+var map = document.getElementById('image-map');
+map.addEventListener('mousedown', pressed, false);
+map.addEventListener('mouseup', free, false);
 function free(e) {
     if (e.target !== e.currentTarget) {
         var clickedBtn = e.target.title;
@@ -106,8 +109,17 @@ function sendfree(button) {
     sendString(`free/${button}`);
 }
 
-imageMapResize();
+function pressPtt() {
+    ptt.classList.add("active");
+    sendpress("ptt");
+}
+function freePtt() {
+    ptt.classList.remove("active");
+    sendfree("ptt");
+}
 
+imageMapResize();
+//setCoords();
 
 /////sound
 
@@ -121,5 +133,82 @@ function send(data) {
     sendString(JSON.stringify(data))
 }
 PHONE.send = send;
+
+(() => {
+    'use strict';
+
+    // ~Warning~ You must get your own API Keys for non-demo purposes.
+    // ~Warning~ Get your PubNub API Keys: https://www.pubnub.com/get-started/
+    // The phone *number* can by any string value
+
+    let session = null;
+    const number = moto ? window.location.hostname: Math.ceil(Math.random() * 10000);
+    const phone = PHONE({
+        number: number
+        , autocam: false
+        , publish_key: 'pub-c-561a7378-fa06-4c50-a331-5c0056d0163c'
+        , subscribe_key: 'sub-c-17b7db8a-3915-11e4-9868-02ee2ddab7fe'
+    });
+
+    // Debugging Output
+    phone.debug(info => console.info(info));
+
+    // Show Number
+    //phone.$('number').innerHTML = 'Number: ' + number;
+    phone.camera.start().then(() => phone.camera.manageAudio(moto));
+
+    // Local Camera Display
+    phone.camera.ready(video => {
+        phone.$('video-out').appendChild(video);
+    });
+
+    // As soon as the phone is ready we can make calls
+    phone.ready(() => {
+        if (!moto) {
+            session = phone.dial(window.location.hostname);
+        }
+        // Start Call
+        phone.bind(
+            'mousedown,touchstart'
+            , phone.$('ptt')
+            , event => {
+                phone.camera.manageAudio(true);
+                pressPtt();
+            }
+        );
+        phone.bind(
+            'mouseup,touchend'
+            , phone.$('ptt')
+            , event => {
+                phone.camera.manageAudio(false);
+                freePtt();
+            }
+        );
+
+        phone.bind(
+            'mousedown,touchstart'
+            , phone.$('fullscreen')
+            , event => {
+                if ('wakeLock' in navigator) {
+                    navigator.wakeLock.request();
+                }
+                document.getElementById("motorolaFront").requestFullscreen();
+
+            }
+        );
+
+    });
+
+    // When Call Comes In or is to be Connected
+    phone.receive(function (session) {
+
+        // Display Your Friend's Live Video
+        session.connected(function (session) {
+            phone.$('video-out').appendChild(session.video);
+        });
+
+    });
+
+})();
 
 
