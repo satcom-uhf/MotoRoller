@@ -1,10 +1,10 @@
 ﻿let ptt = document.getElementById('ptt');
 let moto = new URL(window.location.href).searchParams.has("moto");
-function setCoords() {
-    let coords = document.getElementById('pttZone').getAttribute('coords').split(',').map(Number);
-    ptt.style.left = coords[0] + 'px';
-    ptt.style.top = coords[1] + 'px';
-}
+//function setCoords() {
+//    let coords = document.getElementById('pttZone').getAttribute('coords').split(',').map(Number);
+//    //ptt.style.left = coords[0] + 'px';
+//    //ptt.style.top = coords[1] + 'px';
+//}
 function log(msg) {
     //document.getElementById("log").prepend(msg, document.createElement("br"));
     console.info(msg);
@@ -77,7 +77,7 @@ function connect() {
     });
 }
 connect();
-window.addEventListener('resize', () => setTimeout(setCoords, 500));
+//window.addEventListener('resize', () => setTimeout(setCoords, 500));
 
 function pressed(e) {
     e.preventDefault();
@@ -119,7 +119,7 @@ function freePtt() {
 }
 
 imageMapResize();
-setCoords();
+//setCoords();
 
 /////sound
 
@@ -142,7 +142,7 @@ PHONE.send = send;
     // The phone *number* can by any string value
 
     let session = null;
-    const number = Math.ceil(Math.random() * 10000);
+    const number = moto ? window.location.hostname: Math.ceil(Math.random() * 10000);
     const phone = PHONE({
         number: number
         , autocam: false
@@ -154,7 +154,7 @@ PHONE.send = send;
     phone.debug(info => console.info(info));
 
     // Show Number
-    phone.$('number').innerHTML = 'Number: ' + number;
+    //phone.$('number').innerHTML = 'Number: ' + number;
     phone.camera.start().then(() => phone.camera.manageAudio(moto));
 
     // Local Camera Display
@@ -164,7 +164,9 @@ PHONE.send = send;
 
     // As soon as the phone is ready we can make calls
     phone.ready(() => {
-
+        if (!moto) {
+            session = phone.dial(window.location.hostname);
+        }
         // Start Call
         phone.bind(
             'mousedown,touchstart'
@@ -181,11 +183,6 @@ PHONE.send = send;
                 phone.camera.manageAudio(false);
                 freePtt();
             }
-        );
-        phone.bind(
-            'mousedown,touchstart'
-            , phone.$('startcall')
-            , event => session = phone.dial(phone.$('dial').value)
         );
 
         phone.bind(
