@@ -403,7 +403,7 @@ const PHONE = window.PHONE = config => {
     // Prepare Local Media Camera and Mic
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     function startcamera() {
-        navigator.mediaDevices.getUserMedia(mediaconf).then( stream => {
+        return navigator.mediaDevices.getUserMedia(mediaconf).then( stream => {
             if (!stream) return unablecb(stream);
             mystream = stream;
             snapshots_setup(stream);
@@ -430,6 +430,12 @@ const PHONE = window.PHONE = config => {
         if (!mystream) return;
         for (let track of mystream.getAudioTracks() ){
             track.enabled = !track.enabled ;
+        }
+    }
+    function manageAudio(active) {
+        if (!mystream) return;
+        for (let track of mystream.getAudioTracks()) {
+            track.enabled = active;
         }
     }
 
@@ -573,6 +579,7 @@ const PHONE = window.PHONE = config => {
     PHONE.camera.start       = startcamera;
     PHONE.camera.stop        = stopcamera;
     PHONE.camera.toggleAudio = toggleAudio;
+    PHONE.camera.manageAudio = manageAudio;
     PHONE.camera.toggleVideo = toggleVideo;
     PHONE.camera.video       = () => myvideo;
     PHONE.camera.ready       = PHONE.camera;

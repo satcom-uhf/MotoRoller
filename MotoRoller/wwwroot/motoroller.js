@@ -155,7 +155,7 @@ PHONE.send = send;
 
     // Show Number
     phone.$('number').innerHTML = 'Number: ' + number;
-    phone.camera.start();
+    phone.camera.start().then(() => phone.camera.manageAudio(false));
 
     // Local Camera Display
     phone.camera.ready(video => {
@@ -169,12 +169,18 @@ PHONE.send = send;
         phone.bind(
             'mousedown,touchstart'
             , phone.$('ptt')
-            , event => pressPtt()
+            , event => {
+                phone.camera.manageAudio(true);
+                pressPtt();
+            }
         );
         phone.bind(
             'mouseup,touchend'
             , phone.$('ptt')
-            , event => freePtt()
+            , event => {
+                phone.camera.manageAudio(false);
+                freePtt();
+            }
         );
         phone.bind(
             'mousedown,touchstart'
