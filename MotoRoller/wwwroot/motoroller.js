@@ -77,17 +77,8 @@ function connect() {
     });
 }
 connect();
-window.addEventListener('resize', () => setTimeout(setCoords, 300));
-function pressPtt() { sendpress("ptt"); }
-function freePtt() { sendpress("ptt"); }
-ptt.addEventListener('mousedown', (e) => { e.preventDefault(); pressPtt(); }, false);
-ptt.addEventListener('mouseup', (e) => { e.preventDefault(); freePtt(); }, false);
-ptt.addEventListener('touchstart', (e) => { e.preventDefault(); pressPtt(); }, false);
-ptt.addEventListener('touchend', (e) => { e.preventDefault(); freePtt(); }, false);
+window.addEventListener('resize', () => setTimeout(setCoords, 500));
 
-var map = document.getElementById('image-map');
-map.addEventListener('mousedown', pressed, false);
-map.addEventListener('mouseup', free, false);
 function pressed(e) {
     e.preventDefault();
     if (e.target !== e.currentTarget) {
@@ -97,6 +88,9 @@ function pressed(e) {
     }
     e.stopPropagation();
 }
+var map = document.getElementById('image-map');
+map.addEventListener('mousedown', pressed, false);
+map.addEventListener('mouseup', free, false);
 function free(e) {
     if (e.target !== e.currentTarget) {
         var clickedBtn = e.target.title;
@@ -115,6 +109,15 @@ function sendfree(button) {
     sendString(`free/${button}`);
 }
 
+function pressPtt() {
+    ptt.classList.add("active");
+    sendpress("ptt");
+}
+function freePtt() {
+    ptt.classList.remove("active");
+    sendfree("ptt");
+}
+
 imageMapResize();
 setCoords();
 
@@ -130,5 +133,79 @@ function send(data) {
     sendString(JSON.stringify(data))
 }
 PHONE.send = send;
+
+(() => {
+    'use strict';
+
+    // ~Warning~ You must get your own API Keys for non-demo purposes.
+    // ~Warning~ Get your PubNub API Keys: https://www.pubnub.com/get-started/
+    // The phone *number* can by any string value
+
+    let session = null;
+    const number = Math.ceil(Math.random() * 10000);
+    const phone = PHONE({
+        number: number
+        , autocam: false
+        , publish_key: 'pub-c-561a7378-fa06-4c50-a331-5c0056d0163c'
+        , subscribe_key: 'sub-c-17b7db8a-3915-11e4-9868-02ee2ddab7fe'
+    });
+
+    // Debugging Output
+    phone.debug(info => console.info(info));
+
+    // Show Number
+    phone.$('number').innerHTML = 'Number: ' + number;
+    phone.camera.start();
+
+    // Local Camera Display
+    phone.camera.ready(video => {
+        phone.$('video-out').appendChild(video);
+    });
+
+    // As soon as the phone is ready we can make calls
+    phone.ready(() => {
+
+        // Start Call
+        phone.bind(
+            'mousedown,touchstart'
+            , phone.$('ptt')
+            , event => pressPtt()
+        );
+        phone.bind(
+            'mouseup,touchend'
+            , phone.$('ptt')
+            , event => freePtt()
+        );
+        phone.bind(
+            'mousedown,touchstart'
+            , phone.$('startcall')
+            , event => session = phone.dial(phone.$('dial').value)
+        );
+
+        phone.bind(
+            'mousedown,touchstart'
+            , phone.$('fullscreen')
+            , event => {
+                if ('wakeLock' in navigator) {
+                    navigator.wakeLock.request();
+                }
+                document.getElementById("motorolaFront").requestFullscreen();
+
+            }
+        );
+
+    });
+
+    // When Call Comes In or is to be Connected
+    phone.receive(function (session) {
+
+        // Display Your Friend's Live Video
+        session.connected(function (session) {
+            phone.$('video-out').appendChild(session.video);
+        });
+
+    });
+
+})();
 
 
