@@ -1,16 +1,21 @@
 # MotoRoller: Motorola GM remote control
 
-MotoRoller - открытый некоммерческий проект сообщества Satcom Pirates.
+MotoRoller - кроссплатформенный веб-сервер с открытым исходным кодом, созданный силами сообщества Satcom Pirates.
+
+На сегодняшний день поддерживается:
+- управление радиостанциями Motorola GM 1280, GM360 с зонами
+- голосовой траффик через WebRTC в браузерах Firefox & Chrome
+- работа на одноплатных компьютерах, в частности на Orange PI Zero 2
 
 https://user-images.githubusercontent.com/90838159/186971130-ab151ed4-0c0b-4ded-856b-98d162e6c4db.mp4
 
-Для работы программы требуется dotnet runtime. Установите dotnet runtime под вашу ОС (Linux/Windows) https://dotnet.microsoft.com/en-us/download/dotnet/6.0
+Для работы веб-сервера требуется dotnet runtime. Установите dotnet runtime под вашу ОС (Linux/Windows) https://dotnet.microsoft.com/en-us/download/dotnet/6.0
 
 - Скачайте и распакуйте архив
 - Откройте appsettings.json любым текстовым редактором
 - В строке "SerialPort": укажите порт, к которому подключен программатор станции. Пример для windows "SerialPort":"COM6", для linux "SerialPort": "/dev/ttyS1"
 - Откройте командную строку или терминал.
-- Запустите программу командой dotnet motoroller.dll --urls [http://0.0.0.0:80](http://0.0.0.0/) , где 80 - порт на котором будет запущен веб-сервер. Можно использовать другой порт по вашему усмотрению.
+- Запустите программу командой dotnet MotoRoller.dll --urls [http://0.0.0.0:80](http://0.0.0.0/) , где 80 - порт на котором будет запущен веб-сервер. Можно использовать другой порт по вашему усмотрению.
 - Включите радиостанцию.
 - Откройте браузер по адресу http://localhost/
 
